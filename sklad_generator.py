@@ -5,9 +5,11 @@ def water(): # randomly generates kind of water
     water_l = ['miekka', 'twarda']
     return random.choice(water_l)
 
+
 def malt(): # randomly generates 1 type of malt
     malt_l = ['jeczmienny', 'pszeniczny', 'zytni', 'palony', 'wedzony', 'karmelowy']
     return random.choice(malt_l)
+
 
 def additionals(): # randomly generates from 0 to 3 different additionals
     add_l = ['miod wielokwiatowy', 'kwiat lotosu', 'aloes', 'wanilia', 'brzoskwinia', 'ananas', 'kokos', 'chili',
@@ -16,6 +18,7 @@ def additionals(): # randomly generates from 0 to 3 different additionals
              'czekolada', 'karmel', 'truskawka']
     n = random.randint(0, 3)
     return random.sample(add_l, n)
+
 
 def brand():
     brand_l = ['Budweiser', 'Bud Light', 'Heineken', 'Stella Artois', 'Skol', 'Corona', 'Guinness', 'Coors Light',
@@ -26,7 +29,7 @@ def brand():
 
 
 def type():
-    type_l = ['pszeniczne', 'jasny lagier', 'ciemny lagier', 'marcowe', 'mocny lagier', 'koźlak', 'pilzner',
+    type_l = ['pszeniczne', 'jasny lager', 'ciemny lager', 'marcowe', 'mocny lager', 'koźlak', 'pilzner',
               'porter bałtycki', 'stout', 'pale ale', 'india pale ale']
     return random.choice(type_l)
 
@@ -85,13 +88,14 @@ if __name__ == '__main__':
 
     ingredients_list = []
     beer_list = []
-    for i in range(3):
+    for i in range(10):
         tmp_list = []
         tmp_list.append(additionals())
         tmp_list.append(malt())
         tmp_list.append(water())
         ingredients_list.append(tmp_list)
 
+    for i in range(10):
         tmp_list_2 = []
         tmp_list_2.append(name())
         tmp_list_2.append(brand())
@@ -105,7 +109,7 @@ if __name__ == '__main__':
         tmp_list_2.append(country())
         beer_list.append(tmp_list_2)
 
-    sql_insert_ingredients = "INSERT INTO sklad (woda, slod, skladniki) VALUES (%s, %s, %s)"
+    sql_insert_ingredients = "INSERT INTO sklad (woda, slod, dodatki) VALUES (%s, %s, %s)"
     for i in ingredients_list:
         ingredients = ",".join(i[0])
         values = (i[2], i[1], ingredients)

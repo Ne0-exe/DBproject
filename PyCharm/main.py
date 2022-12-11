@@ -206,7 +206,7 @@ def check_existing_users(current_user):
                 main_menu(current_user)
     main_menu(current_user)
 
-
+# ZMIENIC INDEKSY, BY ODPOWIADAŁY TYMZ  BAZY DANCYH
 def show_product(sql_command, current_id):
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
