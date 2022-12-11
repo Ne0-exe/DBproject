@@ -67,6 +67,12 @@ def country():
     return random.choice(country_l)
 
 
+def name():
+    name_l = ['Export', 'Chmielowe', 'Miodowe', 'Summer', 'Tropical', 'Porter', 'Ale', 'Exclusive', 'Strong', 'Mocne',
+              'Karmelowe', 'IPA', 'APA']
+    return random.choice(name_l)
+
+
 if __name__ == '__main__':
     mydb = mysql.connector.connect(
         host="localhost",
@@ -79,7 +85,7 @@ if __name__ == '__main__':
 
     ingredients_list = []
     beer_list = []
-    for i in range(1):
+    for i in range(3):
         tmp_list = []
         tmp_list.append(additionals())
         tmp_list.append(malt())
@@ -87,6 +93,7 @@ if __name__ == '__main__':
         ingredients_list.append(tmp_list)
 
         tmp_list_2 = []
+        tmp_list_2.append(name())
         tmp_list_2.append(brand())
         tmp_list_2.append(type())
         tmp_list_2.append(voltage())
@@ -98,21 +105,33 @@ if __name__ == '__main__':
         tmp_list_2.append(country())
         beer_list.append(tmp_list_2)
 
-
-
-
+    sql_insert_ingredients = "INSERT INTO sklad (woda, slod, skladniki) VALUES (%s, %s, %s)"
     for i in ingredients_list:
-        print('Sklad: ', i[0])
-        print('Slod: ', i[1])
-        print('Woda: ', i[2])
+        ingredients = ",".join(i[0])
+        values = (i[2], i[1], ingredients)
+        mycursor.execute(sql_insert_ingredients, values)
+        mydb.commit()
 
+    sql_insert_beer = "INSERT INTO piwa (nazwa_piwa, marka, gatunek, voltaz, IBU, opakowanie, rodzaj_fermentacji," \
+                      "piana, nasycenie_co2, kraj) " \
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     for i in beer_list:
-        print('Marka: ', i[0])
-        print('Rodzaj: ', i[1])
-        print('Voltage: ', i[2])
-        print('Opakowanie: ', i[3])
-        print('Rodzaj fermentacji: ', i[4])
-        print('IBU: ', i[5])
-        print('Piana: ', i[6])
-        print('CO2: ', i[7])
-        print('Kraj: ', i[8])
+        values_2 = (i[0], i[1], i[2], i[3], i[6], i[4], i[5], i[7], i[8], i[9])
+        mycursor.execute(sql_insert_beer, values_2)
+        mydb.commit()
+
+    # sql_find_duplicate = "SELECT nazwa_piwa, marka FROM piwa " \
+    #                      "GROUP BY nazwa_piwa, marka HAVING COUNT(nazwa_piwa) > 1 AND COUNT(marka)"
+    # mycursor.execute(sql_find_duplicate)
+    # result = mycursor.fetchall()
+    #
+    # sql_find_id = "SELECT ID_piwa FROM piwa WHERE nazwa_piwa = '%s' AND marka = '%s'" % (result[0][0], result[0][1])
+    # mycursor.execute(sql_find_id)
+    # result2 = mycursor.fetchall()
+    #
+    # for i in result2:
+    #     sql_set_ingredients = "INSERT INTO piwa (id_skladu) WHERE ID_pwia = '%i' VALUES (%i)" % (i[0], random.randint(1, 10))
+    #     mycursor.execute(sql_set_ingredients)
+    #     result3 = mycursor.fetchall()
+    #     print(result3)
+
