@@ -66,7 +66,7 @@ def CO2():
 
 def country():
     country_l = ['Chiny', 'USA', 'Brazylia', 'Niemcy', 'Meksyk', 'Wielka Brytania', 'Polska', 'Hiszpania', 'Japonia',
-                 'Nigeria', 'Republika Południowej Afryki', 'Czechy']
+                 'Nigeria', 'RPA', 'Czechy']
     return random.choice(country_l)
 
 
