@@ -211,10 +211,6 @@ def show_product(sql_command, current_id):
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
 
-    # [piwo1, piwo2, pwio3]
-    # [0]    [1]     [2]
-    # len = 2
-
     size = 42
     for i in range(current_id, current_id+3):
         if i < len(myresult):
