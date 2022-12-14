@@ -381,9 +381,6 @@ def main_menu(current_user):
             # End program
             exit()
 
-def test_git():
-    print(test_git())
-
 
 if __name__ == '__main__':
     mydb = mysql.connector.connect(
@@ -395,4 +392,3 @@ if __name__ == '__main__':
     mycursor = mydb.cursor()
     guest = Guest()
     main_menu(guest)
-    #komentarz testowy
