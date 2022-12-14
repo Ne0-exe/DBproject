@@ -392,4 +392,3 @@ if __name__ == '__main__':
     mycursor = mydb.cursor()
     guest = Guest()
     main_menu(guest)
-    #TEST git
