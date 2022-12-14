@@ -382,7 +382,7 @@ def main_menu(current_user):
             exit()
 
 def test_git():
-    pass
+    print(test_git())
 
 
 if __name__ == '__main__':
