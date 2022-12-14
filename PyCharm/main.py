@@ -1,5 +1,6 @@
 import os
 import mysql.connector
+import random
 
 
 class Guest:
@@ -294,6 +295,19 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     search_product_menu(current_user)
 
 
+def search_by_ingredients(ingredients_l):
+    sql_command = "SELECT id_skladu FROM sklad WHERE dodatki='%s'" % ingredients_l
+    mycursor.execute(sql_command)
+    myresult = mycursor.fetchall()
+
+    for i in range(len(myresult)):
+        sql_command = "SELECT nazwa_piwa, marka FROM piwa WHERE id_skladu='%i'" % myresult[i][0]
+        mycursor.execute(sql_command)
+        myresult = mycursor.fetchall()
+    print(myresult)
+    pass
+
+
 def search_product_menu(current_user):
     print('Wyszukaj produkt: ')
     print('1. Nazwa')
@@ -308,7 +322,6 @@ def search_product_menu(current_user):
     if choice == '1':
         choice_value = input('Nazwa szukanego produktu: ')
         search_by_parameter(current_user, "nazwa_piwa", choice_value)
-        # Search by product name
     elif choice == '2':
         choice_value = input('Marka szukanego produktu: ')
         search_by_parameter(current_user, "marka", choice_value)
@@ -319,7 +332,41 @@ def search_product_menu(current_user):
         choice_value = input('Voltaż szukanego produktu: ')
         search_by_parameter(current_user, "voltaz", choice_value)
     elif choice == '5':
-        pass
+        print("Dostępne składniki:\n"
+              "1. miód wielokwiatowy, "
+              "2. kwiat lotosu, "
+              "3. aloes,\n"
+              "4. wanilia, "
+              "5. brzoskwinia, "
+              "6. ananas,\n"
+              "7. koks, "
+              "8. chili, "
+              "9. gruszka,\n"
+              "10. cytryna, "
+              "11. kawa, "
+              "12. malina,\n"
+              "13. trawa cytrynowa, "
+              "14. rum, "
+              "15. limonka,\n"
+              "16. grejpfrut, "
+              "17. winogrono, "
+              "18. jasmin,\n"
+              "19. borówka amerykańska, "
+              "20. poziomka, "
+              "21. jagoda,\n"
+              "22. ciastko, "
+              "23. smoczy owoc, "
+              "24. persymona,\n"
+              "25. czekolada, "
+              "26. karmel, "
+              "27. truskawka\n")
+        print("WYBIERZ OD 1 DO 3 SKŁADNIKÓW ODDZIELAJĄC JE PRZECINKIEM!")
+        choice_value = input(":")
+        values = choice_value.split(',')
+        values.sort()
+        str_val = ",".join(values)
+        search_by_ingredients(str_val)
+
     elif choice == '6':
         main_menu(current_user)
 

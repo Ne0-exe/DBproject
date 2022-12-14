@@ -17,7 +17,15 @@ def additionals(): # randomly generates from 0 to 3 different additionals
              'jasmin', 'borowka amerykanska', 'poziomka', 'jagoda', 'ciastko', 'smoczy owoc', 'persymona',
              'czekolada', 'karmel', 'truskawka']
     n = random.randint(0, 3)
-    return random.sample(add_l, n)
+    lst = []
+    for i in range(n):
+        choice = random.choice(add_l)
+        lst.append(choice)
+        add_l.remove(choice)
+        print(add_l)
+    lst.sort()
+    string = ",".join(lst)
+    return string
 
 
 def brand():
@@ -78,24 +86,24 @@ def name():
 
 if __name__ == '__main__':
     mydb = mysql.connector.connect(
-        host="localhost",
+        host="projektdb.chit4dyq2s1j.us-east-1.rds.amazonaws.com",
         user="root",
-        # Wprowadzcie haslo do swojej bazy danych
-        password="",
-        database="wyroby_slodowe_projekt"
+        password="ciscocisco123",
+        database="projektDB"
     )
     mycursor = mydb.cursor()
 
     ingredients_list = []
     beer_list = []
-    for i in range(10):
+
+    for i in range(100):
         tmp_list = []
         tmp_list.append(additionals())
         tmp_list.append(malt())
         tmp_list.append(water())
         ingredients_list.append(tmp_list)
 
-    for i in range(10):
+    for i in range(1):
         tmp_list_2 = []
         tmp_list_2.append(name())
         tmp_list_2.append(brand())
@@ -109,21 +117,29 @@ if __name__ == '__main__':
         tmp_list_2.append(country())
         beer_list.append(tmp_list_2)
 
+
+
+
+
+
     sql_insert_ingredients = "INSERT INTO sklad (woda, slod, dodatki) VALUES (%s, %s, %s)"
+
     for i in ingredients_list:
-        ingredients = ",".join(i[0])
-        values = (i[2], i[1], ingredients)
+        values = (i[2], i[1], i[0])
         mycursor.execute(sql_insert_ingredients, values)
         mydb.commit()
 
     sql_insert_beer = "INSERT INTO piwa (nazwa_piwa, marka, gatunek, voltaz, IBU, opakowanie, rodzaj_fermentacji," \
                       "piana, nasycenie_co2, kraj) " \
                       "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+
     for i in beer_list:
         values_2 = (i[0], i[1], i[2], i[3], i[6], i[4], i[5], i[7], i[8], i[9])
         mycursor.execute(sql_insert_beer, values_2)
         mydb.commit()
 
+
+    # WSTĘPNE UZALEŻNIENIE OD SIEBIE WYNIKÓW GENERATORA
     # sql_find_duplicate = "SELECT nazwa_piwa, marka FROM piwa " \
     #                      "GROUP BY nazwa_piwa, marka HAVING COUNT(nazwa_piwa) > 1 AND COUNT(marka)"
     # mycursor.execute(sql_find_duplicate)
