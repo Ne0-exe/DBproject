@@ -206,10 +206,14 @@ def check_existing_users(current_user):
                 main_menu(current_user)
     main_menu(current_user)
 
-# ZMIENIC INDEKSY, BY ODPOWIADAŁY TYMZ  BAZY DANCYH
+
 def show_product(sql_command, current_id):
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
+
+    # [piwo1, piwo2, pwio3]
+    # [0]    [1]     [2]
+    # len = 2
 
     size = 42
     for i in range(current_id, current_id+3):
@@ -231,9 +235,7 @@ def show_product(sql_command, current_id):
             print("| %20s: %20s |" % ("Piana", myresult[i][9]))
             print("| %20s: %20s |" % ("Nasycenie CO2", myresult[i][10]))
             print('+', '-' * size, '+')
-        elif i + 1 == len(myresult) or i == len(myresult):
-            return False
-        else:
+        if i + 1 == len(myresult):
             return False
     return True
 
@@ -241,7 +243,9 @@ def show_product(sql_command, current_id):
 def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     sql_command = "SELECT * FROM piwa WHERE %s='%s'" % (parameter, parameter_value)
 
-    if show_product(sql_command, current_id):
+
+    while(show_product(sql_command, current_id)):
+        print('1')
         current_id += 3
         if current_id > 3:
             print('1. Wyświetl kolejne')
@@ -252,42 +256,46 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
             if choice == '1':
                 search_by_parameter(current_user, parameter, parameter_value, current_id)
             elif choice == '2':
-                search_by_parameter(current_user, parameter, parameter_value, current_id - 3)
+                current_id -= 3
+                search_by_parameter(current_user, parameter, parameter_value, current_id)
             elif choice == '3':
                 search_product_menu(current_user)
             elif choice == '4':
                 main_menu(current_user)
         else:
+            print('2')
             print('1. Wyświetl kolejne')
             print('2. Wyszukaj ponownie')
             print('3. Menu główne')
             choice = input(':')
             if choice == '1':
-                search_by_parameter(current_user, parameter, parameter_value, current_id+3)
+                search_by_parameter(current_user, parameter, parameter_value, current_id)
             elif choice == '2':
                 search_product_menu(current_user)
             elif choice == '3':
                 main_menu(current_user)
+
+    print('ID: ', current_id)
+    if current_id == 0:
+        print('1. Wyszukaj ponownie')
+        print('2. Menu główne')
+        choice = input(':')
+        if choice == '1':
+            search_product_menu(current_user)
+        elif choice == '2':
+            main_menu(current_user)
     else:
-        if current_id == 0:
-            print('1. Wyszukaj ponownie')
-            print('2. Menu główne')
-            choice = input(':')
-            if choice == '1':
-                search_product_menu(current_user)
-            elif choice == '2':
-                main_menu(current_user)
-        else:
-            print('1. Wyświetl poprzednie')
-            print('2. Wyszukaj ponownie')
-            print('3. Menu główne')
-            choice = input(':')
-            if choice == '1':
-                search_by_parameter(current_user, parameter, parameter_value, current_id - 3)
-            elif choice == '2':
-                search_product_menu(current_user)
-            elif choice == '3':
-                main_menu(current_user)
+        print('1. Wyświetl poprzednie')
+        print('2. Wyszukaj ponownie')
+        print('3. Menu główne')
+        choice = input(':')
+        if choice == '1':
+            current_id -= 3
+            search_by_parameter(current_user, parameter, parameter_value, current_id)
+        elif choice == '2':
+            search_product_menu(current_user)
+        elif choice == '3':
+            main_menu(current_user)
 
     print('Zakonczono wyszukiwanie')
     search_product_menu(current_user)
@@ -305,8 +313,8 @@ def search_product_menu(current_user):
     choice = input(':')
 
     if choice == '1':
-        type = input('Nazwa szukanego produktu: ')
-        search_by_parameter(current_user, "nazwa_piwa", type)
+        name = input('Nazwa szukanego produktu: ')
+        search_by_parameter(current_user, "nazwa_piwa", name)
         # Search by product name
     elif choice == '2':
         type = input('Marka szukanego produktu: ')
@@ -380,11 +388,10 @@ def main_menu(current_user):
 
 if __name__ == '__main__':
     mydb = mysql.connector.connect(
-        host="localhost",
+        host="projektdb.chit4dyq2s1j.us-east-1.rds.amazonaws.com",
         user="root",
-        # Wprowadzcie haslo do swojej bazy danych
-        password="",
-        database="wyroby_slodowe_projekt"
+        password="ciscocisco123",
+        database="projektDB"
     )
     mycursor = mydb.cursor()
     guest = Guest()
