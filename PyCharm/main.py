@@ -215,19 +215,19 @@ def show_product(sql_command, current_id):
     for i in range(current_id, current_id+3):
         if i < len(myresult):
             print('\n+', '-' * size, '+')
-            str = '%s %s |' % (myresult[i][1], myresult[i][0])
+            str = '%s. %s %s |' % (myresult[i][0], myresult[i][2], myresult[i][1])
             str = str.upper()
             print("| %44s" % str)
             print('+', '-' * size, '+')
-            print("| %20s: %20s |" % ("Marka", myresult[i][1]))
-            print("| %20s: %20s |" % ("Nazwa", myresult[i][0]))
-            print("| %20s: %20s |" % ("Średnia ocen", myresult[i][5]))
+            print("| %20s: %20s |" % ("Marka", myresult[i][2]))
+            print("| %20s: %20s |" % ("Nazwa", myresult[i][1]))
+            print("| %20s: %20s |" % ("Gatunek", myresult[i][3]))
+            print("| %20s: %20s |" % ("Średnia ocen", myresult[i][6]))
             print("| %20s: %20s |" % ("Wyprodukowano w", myresult[i][11]))
-            print("| %20s: %20s |" % ("Voltaż", myresult[i][3]))
-            print("| %20s: %20s |" % ("Goryczka", myresult[i][4]))
-            print("| %20s: %20s |" % ("Opakowanie", myresult[i][6]))
-            print("| %20s: %20s |" % ("Rodzaj fermentacji", myresult[i][7]))
-            print("| %20s: %20s |" % ("Chmielowość", myresult[i][8]))
+            print("| %20s: %20s |" % ("Voltaż", myresult[i][4]))
+            print("| %20s: %20s |" % ("IBU", myresult[i][5]))
+            print("| %20s: %20s |" % ("Opakowanie", myresult[i][7]))
+            print("| %20s: %20s |" % ("Rodzaj fermentacji", myresult[i][8]))
             print("| %20s: %20s |" % ("Piana", myresult[i][9]))
             print("| %20s: %20s |" % ("Nasycenie CO2", myresult[i][10]))
             print('+', '-' * size, '+')
@@ -241,7 +241,6 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
 
 
     while(show_product(sql_command, current_id)):
-        print('1')
         current_id += 3
         if current_id > 3:
             print('1. Wyświetl kolejne')
@@ -259,7 +258,6 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
             elif choice == '4':
                 main_menu(current_user)
         else:
-            print('2')
             print('1. Wyświetl kolejne')
             print('2. Wyszukaj ponownie')
             print('3. Menu główne')
@@ -271,7 +269,6 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
             elif choice == '3':
                 main_menu(current_user)
 
-    print('ID: ', current_id)
     if current_id == 0:
         print('1. Wyszukaj ponownie')
         print('2. Menu główne')
@@ -309,16 +306,18 @@ def search_product_menu(current_user):
     choice = input(':')
 
     if choice == '1':
-        name = input('Nazwa szukanego produktu: ')
-        search_by_parameter(current_user, "nazwa_piwa", name)
+        choice_value = input('Nazwa szukanego produktu: ')
+        search_by_parameter(current_user, "nazwa_piwa", choice_value)
         # Search by product name
     elif choice == '2':
-        type = input('Marka szukanego produktu: ')
-        search_by_parameter(current_user, "marka", type)
+        choice_value = input('Marka szukanego produktu: ')
+        search_by_parameter(current_user, "marka", choice_value)
     elif choice == '3':
-        pass
+        choice_value = input('Gatunek szukanego produktu: ')
+        search_by_parameter(current_user, "gatunek", choice_value)
     elif choice == '4':
-        pass
+        choice_value = input('Voltaż szukanego produktu: ')
+        search_by_parameter(current_user, "voltaz", choice_value)
     elif choice == '5':
         pass
     elif choice == '6':
