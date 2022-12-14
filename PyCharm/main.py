@@ -74,6 +74,55 @@ class Admin(Verified):
         print('5. Wyloguj')
         print('6. Exit')
 
+    @staticmethod
+    def show_queued_opinions(sql_command, current_id):
+        mycursor.execute(sql_command)
+        myresult = mycursor.fetchall()
+
+        print("ID\tocena\topinia\t\t\tID_piwa\tnazwa uzytkownika\t\tstatus")
+        for i in range(current_id, current_id + 3):
+            if i < len(myresult):
+                print('%s. %s %s %s %s |' % (myresult[i][0], myresult[i][1], myresult[i][2], myresult[i][3],
+                                             myresult[i][4]))
+            if i + 1 == len(myresult):
+                return False
+        return True
+
+    def control_display(self, current_id=0) -> None:
+        sql_command = "SELECT ID_opinii, ocena, opinia, ID_piwa, nazwa_uzytkownika FROM kolejka"
+        while self.show_queued_opinions(sql_command, current_id):
+            current_id += 3
+            if current_id > 3:
+                print('1. Wyświetl kolejne')
+                print('2. Wyświetl poprzednie')
+                print('3. Menu główne')
+                choice = input(':')
+                if choice == '1':
+                    self.control_display(current_id)
+                elif choice == '2':
+                    current_id -= 3
+                    self.control_display(current_id)
+                elif choice == '3':
+                    main_menu(self)
+            else:
+                print('1. Wyświetl kolejne')
+                print('2. Menu główne')
+                choice = input(':')
+                if choice == '1':
+                    self.control_display(current_id)
+                elif choice == '2':
+                    main_menu(self)
+
+        if current_id:
+            print('1. Wyświetl poprzednie')
+            print('2. Menu główne')
+            choice = input(':')
+            if choice == '1':
+                current_id -= 3
+                self.control_display(current_id)
+            elif choice == '2':
+                main_menu(self)
+
 
 def clear_view():
     os.system('cls')
@@ -213,7 +262,7 @@ def show_product(sql_command, current_id):
     myresult = mycursor.fetchall()
 
     size = 42
-    for i in range(current_id, current_id+3):
+    for i in range(current_id, current_id + 3):
         if i < len(myresult):
             print('\n+', '-' * size, '+')
             str = '%s. %s %s |' % (myresult[i][0], myresult[i][2], myresult[i][1])
@@ -240,8 +289,7 @@ def show_product(sql_command, current_id):
 def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     sql_command = "SELECT * FROM piwa WHERE %s='%s'" % (parameter, parameter_value)
 
-
-    while(show_product(sql_command, current_id)):
+    while show_product(sql_command, current_id):
         current_id += 3
         if current_id > 3:
             print('1. Wyświetl kolejne')
@@ -416,7 +464,8 @@ def main_menu(current_user):
             acc_management_menu(current_user)
         elif choice == '3':
             # Opinion queue
-            pass
+            current_user.control_display()
+            # main_menu(current_user)
         elif choice == '4':
             # New product queue
             pass
