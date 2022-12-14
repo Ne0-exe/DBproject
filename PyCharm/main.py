@@ -381,6 +381,9 @@ def main_menu(current_user):
             # End program
             exit()
 
+def test_git():
+    pass
+
 
 if __name__ == '__main__':
     mydb = mysql.connector.connect(
