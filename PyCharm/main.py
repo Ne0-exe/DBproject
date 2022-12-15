@@ -1,6 +1,5 @@
 import os
 import mysql.connector
-import random
 
 
 class Guest:
@@ -96,6 +95,7 @@ class Admin(Verified):
                 print('1. Wyświetl kolejne')
                 print('2. Wyświetl poprzednie')
                 print('3. Menu główne')
+                print('4. Wybierz opinie')
                 choice = input(':')
                 if choice == '1':
                     self.control_display(current_id)
@@ -104,15 +104,44 @@ class Admin(Verified):
                     self.control_display(current_id)
                 elif choice == '3':
                     main_menu(self)
+                elif choice == '4':
+                    opinion_id = input('Podaj numer opini:')
+                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                    if result == '1':
+                        mycursor.execute("START TRANSACTION")
+                        mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % (opinion_id))
+                        deciscion = input('Czy napewno chcesz odzrzucić opinie?\n1. Tak\n2. Nie')
+                        if deciscion == 1:
+                            mycursor.execute("COMMIT")
+                        else:
+                            mycursor.execute("ROLLBACK")
+                    else:
+                        continue
             else:
                 print('1. Wyświetl kolejne')
                 print('2. Menu główne')
+                print('3. Wybierz opinie')
                 choice = input(':')
                 if choice == '1':
                     self.control_display(current_id)
                 elif choice == '2':
                     main_menu(self)
-
+                elif choice == '3':
+                    opinion_id = int(input('Podaj numer opini:'))
+                    print(type(opinion_id))
+                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                    if result == '1':
+                        what_do = 'odrzucona'
+                        #mydb.start_transaction()
+                        mycursor.execute("UPDATE kolejka SET status='%s' WHERE ID_opinii='%i'" % (what_do, opinion_id))
+                        #mydb.commit()
+                        deciscion = input('Czy napewno chcesz odzrzucić opinie?\n1. Tak\n2. Nie')
+                        if deciscion == 1:
+                            mydb.commit()
+                        else:
+                            mydb.rollback()
+                    else:
+                        continue
         if current_id:
             print('1. Wyświetl poprzednie')
             print('2. Menu główne')
@@ -485,5 +514,6 @@ if __name__ == '__main__':
         database="projektDB"
     )
     mycursor = mydb.cursor()
+    #mydb.start_transaction()
     guest = Guest()
     main_menu(guest)
