@@ -81,14 +81,18 @@ class Admin(Verified):
         print("ID\tocena\topinia\t\t\tID_piwa\tnazwa uzytkownika\t\tstatus")
         for i in range(current_id, current_id + 3):
             if i < len(myresult):
-                print('%s. %s %s %s %s |' % (myresult[i][0], myresult[i][1], myresult[i][2], myresult[i][3],
-                                             myresult[i][4]))
+                print('%s. %s %s %s %s %s |' % (myresult[i][0], myresult[i][1], myresult[i][2], myresult[i][3],
+                                             myresult[i][4], myresult[i][5]))
             if i + 1 == len(myresult):
                 return False
         return True
 
     def control_display(self, current_id=0) -> None:
-        sql_command = "SELECT ID_opinii, ocena, opinia, ID_piwa, nazwa_uzytkownika FROM kolejka"
+        sql_command = "SELECT opinie.ID_opinii, opinie.ocena, opinie.opinia, opinie.ID_piwa, " \
+                      "opinie.nazwa_uzytkownika, status_opinii.status FROM opinie  INNER JOIN status_opinii " \
+                      "ON opinie.id_statusu=status_opinii.id WHERE ID_opinii IN (SELECT id_opinii FROM kolejka) " \
+                      "AND id_statusu=1"
+
         while self.show_queued_opinions(sql_command, current_id):
             current_id += 3
             if current_id > 3:
@@ -104,19 +108,18 @@ class Admin(Verified):
                     self.control_display(current_id)
                 elif choice == '3':
                     main_menu(self)
-                elif choice == '4':
-                    opinion_id = input('Podaj numer opini:')
-                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                    if result == '1':
-                        mycursor.execute("START TRANSACTION")
-                        mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % (opinion_id))
-                        deciscion = input('Czy napewno chcesz odzrzucić opinie?\n1. Tak\n2. Nie')
-                        if deciscion == 1:
-                            mycursor.execute("COMMIT")
-                        else:
-                            mycursor.execute("ROLLBACK")
-                    else:
-                        continue
+                # elif choice == '4':
+                #     opinion_id = input('Podaj numer opini:')
+                #     mycursor.execute("UPDATE kolejka SET status='modyfikowana' WHERE ID_opinii='%s'" % opinion_id)
+                #     mydb.commit()
+                #     result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                #     if result == '1':
+                #         mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % opinion_id)
+                #         mydb.commit()
+                #     elif result == '2':
+                #         mycursor.execute("UPDATE kolejka SET status='zaakceptowana' WHERE ID_opinii='%s'" % opinion_id)
+                #         mydb.commit()
+                #     continue
             else:
                 print('1. Wyświetl kolejne')
                 print('2. Menu główne')
@@ -126,31 +129,39 @@ class Admin(Verified):
                     self.control_display(current_id)
                 elif choice == '2':
                     main_menu(self)
-                elif choice == '3':
-                    opinion_id = int(input('Podaj numer opini:'))
-                    print(type(opinion_id))
-                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                    if result == '1':
-                        what_do = 'odrzucona'
-                        #mydb.start_transaction()
-                        mycursor.execute("UPDATE kolejka SET status='%s' WHERE ID_opinii='%i'" % (what_do, opinion_id))
-                        #mydb.commit()
-                        deciscion = input('Czy napewno chcesz odzrzucić opinie?\n1. Tak\n2. Nie')
-                        if deciscion == 1:
-                            mydb.commit()
-                        else:
-                            mydb.rollback()
-                    else:
-                        continue
+                # elif choice == '3':
+                #     opinion_id = input('Podaj numer opini:')
+                #     mycursor.execute("UPDATE kolejka SET status='modyfikowana' WHERE ID_opinii='%s'" % opinion_id)
+                #     mydb.commit()
+                #     result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                #     if result == '1':
+                #         mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % opinion_id)
+                #         mydb.commit()
+                #     elif result == '2':
+                #         mycursor.execute("UPDATE kolejka SET status='zaakceptowana' WHERE ID_opinii='%s'" % opinion_id)
+                #         mydb.commit()
+                #     continue
         if current_id:
             print('1. Wyświetl poprzednie')
             print('2. Menu główne')
+            print('3. Wybierz opinie')
             choice = input(':')
             if choice == '1':
                 current_id -= 3
                 self.control_display(current_id)
             elif choice == '2':
                 main_menu(self)
+            # elif choice == '3':
+            #     opinion_id = input('Podaj numer opini:')
+            #     mycursor.execute("UPDATE kolejka SET status='modyfikowana' WHERE ID_opinii='%s'" % opinion_id)
+            #     mydb.commit()
+            #     result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+            #     if result == '1':
+            #         mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % opinion_id)
+            #         mydb.commit()
+            #     elif result == '2':
+            #         mycursor.execute("UPDATE kolejka SET status='zaakceptowana' WHERE ID_opinii='%s'" % opinion_id)
+            #         mydb.commit()
 
 
 def clear_view():
@@ -514,6 +525,5 @@ if __name__ == '__main__':
         database="projektDB"
     )
     mycursor = mydb.cursor()
-    #mydb.start_transaction()
     guest = Guest()
     main_menu(guest)
