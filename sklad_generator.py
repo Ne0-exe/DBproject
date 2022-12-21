@@ -84,6 +84,11 @@ def name():
     return random.choice(name_l)
 
 
+def id_composition(n):
+    print(random.randint(n))
+
+
+
 if __name__ == '__main__':
     mydb = mysql.connector.connect(
         host="projektdb.chit4dyq2s1j.us-east-1.rds.amazonaws.com",
@@ -95,6 +100,12 @@ if __name__ == '__main__':
 
     ingredients_list = []
     beer_list = []
+
+    #  ilosc_piw =
+
+    #  ilosc_skladu =
+
+
 
     for i in range(100):
         tmp_list = []
@@ -116,11 +127,6 @@ if __name__ == '__main__':
         tmp_list_2.append(CO2())
         tmp_list_2.append(country())
         beer_list.append(tmp_list_2)
-
-
-
-
-
 
     sql_insert_ingredients = "INSERT INTO sklad (woda, slod, dodatki) VALUES (%s, %s, %s)"
 

@@ -327,7 +327,12 @@ def show_product(sql_command, current_id):
 
 
 def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
-    sql_command = "SELECT * FROM piwa WHERE %s='%s'" % (parameter, parameter_value)
+    if parameter == 'id_skladu':
+        sql_command = "SELECT * FROM piwa WHERE id_skladu IN ({})".format(parameter_value)
+    else:
+        sql_command = "SELECT * FROM piwa WHERE %s='%s'" % (parameter, parameter_value)
+
+    print(sql_command)
 
     while show_product(sql_command, current_id):
         current_id += 3
@@ -381,19 +386,6 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
 
     print('Zakonczono wyszukiwanie')
     search_product_menu(current_user)
-
-
-def search_by_ingredients(ingredients_l):
-    sql_command = "SELECT id_skladu FROM sklad WHERE dodatki='%s'" % ingredients_l
-    mycursor.execute(sql_command)
-    myresult = mycursor.fetchall()
-
-    for i in range(len(myresult)):
-        sql_command = "SELECT nazwa_piwa, marka FROM piwa WHERE id_skladu='%i'" % myresult[i][0]
-        mycursor.execute(sql_command)
-        myresult = mycursor.fetchall()
-    print(myresult)
-    pass
 
 
 def search_product_menu(current_user):
@@ -453,7 +445,8 @@ def search_product_menu(current_user):
         values = choice_value.split(',')
         values.sort()
         str_val = ",".join(values)
-        search_by_ingredients(str_val)
+        sql_command = "SELECT id_skladu FROM sklad WHERE dodatki LIKE '%{}%'".format(str_val)
+        search_by_parameter(current_user, 'id_skladu', sql_command)
 
     elif choice == '6':
         main_menu(current_user)
