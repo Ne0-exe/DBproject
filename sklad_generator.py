@@ -101,9 +101,9 @@ if __name__ == '__main__':
     ingredients_list = []
     beer_list = []
 
-    ilosc_piw =
+    #  ilosc_piw =
 
-    ilosc_skladu =
+    #  ilosc_skladu =
 
 
 
