@@ -108,18 +108,18 @@ class Admin(Verified):
                     self.control_display(current_id)
                 elif choice == '3':
                     main_menu(self)
-                # elif choice == '4':
-                #     opinion_id = input('Podaj numer opini:')
-                #     mycursor.execute("UPDATE kolejka SET status='modyfikowana' WHERE ID_opinii='%s'" % opinion_id)
-                #     mydb.commit()
-                #     result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                #     if result == '1':
-                #         mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % opinion_id)
-                #         mydb.commit()
-                #     elif result == '2':
-                #         mycursor.execute("UPDATE kolejka SET status='zaakceptowana' WHERE ID_opinii='%s'" % opinion_id)
-                #         mydb.commit()
-                #     continue
+                elif choice == '4':
+                    opinion_id = input('Podaj numer opini:')
+                    mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
+                    mydb.commit()
+                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                    if result == '1':
+                        mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
+                        mydb.commit()
+                    elif result == '2':
+                        mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
+                        mydb.commit()
+                    self.control_display(current_id)
             else:
                 print('1. Wyświetl kolejne')
                 print('2. Menu główne')
@@ -129,18 +129,18 @@ class Admin(Verified):
                     self.control_display(current_id)
                 elif choice == '2':
                     main_menu(self)
-                # elif choice == '3':
-                #     opinion_id = input('Podaj numer opini:')
-                #     mycursor.execute("UPDATE kolejka SET status='modyfikowana' WHERE ID_opinii='%s'" % opinion_id)
-                #     mydb.commit()
-                #     result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                #     if result == '1':
-                #         mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % opinion_id)
-                #         mydb.commit()
-                #     elif result == '2':
-                #         mycursor.execute("UPDATE kolejka SET status='zaakceptowana' WHERE ID_opinii='%s'" % opinion_id)
-                #         mydb.commit()
-                #     continue
+                elif choice == '3':
+                    opinion_id = input('Podaj numer opini:')
+                    mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
+                    mydb.commit()
+                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                    if result == '1':
+                        mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
+                        mydb.commit()
+                    elif result == '2':
+                        mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
+                        mydb.commit()
+                    self.control_display(current_id)
         if current_id:
             print('1. Wyświetl poprzednie')
             print('2. Menu główne')
@@ -151,17 +151,36 @@ class Admin(Verified):
                 self.control_display(current_id)
             elif choice == '2':
                 main_menu(self)
-            # elif choice == '3':
-            #     opinion_id = input('Podaj numer opini:')
-            #     mycursor.execute("UPDATE kolejka SET status='modyfikowana' WHERE ID_opinii='%s'" % opinion_id)
-            #     mydb.commit()
-            #     result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-            #     if result == '1':
-            #         mycursor.execute("UPDATE kolejka SET status='odrzucona' WHERE ID_opinii='%s'" % opinion_id)
-            #         mydb.commit()
-            #     elif result == '2':
-            #         mycursor.execute("UPDATE kolejka SET status='zaakceptowana' WHERE ID_opinii='%s'" % opinion_id)
-            #         mydb.commit()
+            elif choice == '3':
+                opinion_id = input('Podaj numer opini:')
+                mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
+                mydb.commit()
+                result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                if result == '1':
+                    mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
+                    mydb.commit()
+                elif result == '2':
+                    mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
+                    mydb.commit()
+                self.control_display(current_id)
+        else:
+            print('1. Menu główne')
+            print('2. Wybierz opinie')
+            choice = input(':')
+            if choice == '1':
+                main_menu(self)
+            elif choice == '2':
+                opinion_id = input('Podaj numer opini:')
+                mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
+                mydb.commit()
+                result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+                if result == '1':
+                    mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
+                    mydb.commit()
+                elif result == '2':
+                    mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
+                    mydb.commit()
+                self.control_display(current_id)
 
 
 def clear_view():
