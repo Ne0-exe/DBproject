@@ -74,6 +74,26 @@ class Admin(Verified):
         print('6. Exit')
 
     @staticmethod
+    def opinions_management() -> None:
+        opinion_id = input('Podaj numer opini:')
+        mydb.commit()
+        mycursor.execute("SELECT id_statusu FROM opinie WHERE ID_opinii='%s'" % opinion_id)
+        myresult = mycursor.fetchall()
+        print(myresult)
+        if myresult[0][0] == 1:
+            mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
+            mydb.commit()
+            result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
+            if result == '1':
+                mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
+                mydb.commit()
+            elif result == '2':
+                mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
+                mydb.commit()
+        else:
+            print("Wybrana opinia jest już modyfikowana. Wybierz ponownie!")
+
+    @staticmethod
     def show_queued_opinions(sql_command, current_id):
         mycursor.execute(sql_command)
         myresult = mycursor.fetchall()
@@ -82,12 +102,13 @@ class Admin(Verified):
         for i in range(current_id, current_id + 3):
             if i < len(myresult):
                 print('%s. %s %s %s %s %s |' % (myresult[i][0], myresult[i][1], myresult[i][2], myresult[i][3],
-                                             myresult[i][4], myresult[i][5]))
+                                                myresult[i][4], myresult[i][5]))
             if i + 1 == len(myresult):
                 return False
         return True
 
     def control_display(self, current_id=0) -> None:
+        mydb.commit()
         sql_command = "SELECT opinie.ID_opinii, opinie.ocena, opinie.opinia, opinie.ID_piwa, " \
                       "opinie.nazwa_uzytkownika, status_opinii.status FROM opinie  INNER JOIN status_opinii " \
                       "ON opinie.id_statusu=status_opinii.id WHERE ID_opinii IN (SELECT id_opinii FROM kolejka) " \
@@ -109,16 +130,7 @@ class Admin(Verified):
                 elif choice == '3':
                     main_menu(self)
                 elif choice == '4':
-                    opinion_id = input('Podaj numer opini:')
-                    mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
-                    mydb.commit()
-                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                    if result == '1':
-                        mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
-                        mydb.commit()
-                    elif result == '2':
-                        mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
-                        mydb.commit()
+                    self.opinions_management()
                     self.control_display(current_id)
             else:
                 print('1. Wyświetl kolejne')
@@ -130,16 +142,7 @@ class Admin(Verified):
                 elif choice == '2':
                     main_menu(self)
                 elif choice == '3':
-                    opinion_id = input('Podaj numer opini:')
-                    mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
-                    mydb.commit()
-                    result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                    if result == '1':
-                        mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
-                        mydb.commit()
-                    elif result == '2':
-                        mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
-                        mydb.commit()
+                    self.opinions_management()
                     self.control_display(current_id)
         if current_id:
             print('1. Wyświetl poprzednie')
@@ -152,16 +155,7 @@ class Admin(Verified):
             elif choice == '2':
                 main_menu(self)
             elif choice == '3':
-                opinion_id = input('Podaj numer opini:')
-                mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
-                mydb.commit()
-                result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                if result == '1':
-                    mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
-                    mydb.commit()
-                elif result == '2':
-                    mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
-                    mydb.commit()
+                self.opinions_management()
                 self.control_display(current_id)
         else:
             print('1. Menu główne')
@@ -170,16 +164,7 @@ class Admin(Verified):
             if choice == '1':
                 main_menu(self)
             elif choice == '2':
-                opinion_id = input('Podaj numer opini:')
-                mycursor.execute("UPDATE opinie SET id_statusu=4 WHERE ID_opinii='%s'" % opinion_id)
-                mydb.commit()
-                result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
-                if result == '1':
-                    mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
-                    mydb.commit()
-                elif result == '2':
-                    mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
-                    mydb.commit()
+                self.opinions_management()
                 self.control_display(current_id)
 
 
