@@ -25,6 +25,20 @@ class Guest:
         print('2. Zaloguj')
         print('3. Załóż konto')
         print('4. Exit')
+        choice = input(":")
+        if choice == '1':
+            pass
+            search_product_menu(self)
+            # Search product
+        elif choice == '2':
+            # Log in
+            log_in()
+        elif choice == '3':
+            # Register
+            register()
+        elif choice == '4':
+            # End program
+            exit()
 
     def who_am_i(self) -> None:
         print('Zalogowano jako: ' + self.name)
@@ -43,6 +57,20 @@ class Unverified(Guest):
         print('2. Zarzadzaj kontem')
         print('3. Wyloguj')
         print('4. Exit')
+        choice = input(":")
+        if choice == '1':
+            # Search product
+            pass
+            search_product_menu(self)
+        elif choice == '2':
+            # Account manage
+            acc_management_menu(self)
+        elif choice == '3':
+            # Log out
+            log_out(self)
+        elif choice == '4':
+            # End program
+            exit()
 
     def reset_parameters(self):
         self.name = ''
@@ -59,6 +87,20 @@ class Verified(Unverified):
         print('2. Zarzadzaj kontem')
         print('3. Wyloguj')
         print('4. Exit')
+        choice = input(":")
+        if choice == '1':
+            # Search product
+            pass
+            search_product_menu(self)
+        elif choice == '2':
+            # Account manage
+            acc_management_menu(self)
+        elif choice == '3':
+            # Log out
+            log_out(self)
+        elif choice == '4':
+            # End program
+            exit()
 
 
 class Admin(Verified):
@@ -72,6 +114,26 @@ class Admin(Verified):
         print('4. Przeglądaj proponowane produkty')
         print('5. Wyloguj')
         print('6. Exit')
+        choice = input(":")
+        if choice == '1':
+            # Data base management
+            check_existing_users(self)
+        elif choice == '2':
+            # Account management
+            acc_management_menu(self)
+        elif choice == '3':
+            # Opinion queue
+            self.control_display()
+            # main_menu(current_user)
+        elif choice == '4':
+            # New product queue
+            pass
+        elif choice == '5':
+            # Log out
+            log_out(self)
+        elif choice == '6':
+            # End program
+            exit()
 
     @staticmethod
     def opinions_management() -> None:
@@ -336,8 +398,6 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     else:
         sql_command = "SELECT * FROM piwa WHERE %s='%s'" % (parameter, parameter_value)
 
-    print(sql_command)
-
     while show_product(sql_command, current_id):
         current_id += 3
         if current_id > 3:
@@ -459,59 +519,7 @@ def search_product_menu(current_user):
 def main_menu(current_user):
     clear_view()
     print('MENU \n')
-
     current_user.show_menu()
-
-    choice = input(":")
-
-    if current_user.role == 'guest':
-        if choice == '1':
-            pass
-            search_product_menu(current_user)
-            # Search product
-        elif choice == '2':
-            # Log in
-            log_in()
-        elif choice == '3':
-            # Register
-            register()
-        elif choice == '4':
-            # End program
-            exit()
-    elif current_user.role == 'unverified' or current_user.role == 'verified':
-        if choice == '1':
-            # Search product
-            pass
-            search_product_menu(current_user)
-        elif choice == '2':
-            # Account manage
-            acc_management_menu(current_user)
-        elif choice == '3':
-            # Log out
-            log_out(current_user)
-        elif choice == '4':
-            # End program
-            exit()
-    elif current_user.role == 'admin':
-        if choice == '1':
-            # Data base management
-            check_existing_users(current_user)
-        elif choice == '2':
-            # Account management
-            acc_management_menu(current_user)
-        elif choice == '3':
-            # Opinion queue
-            current_user.control_display()
-            # main_menu(current_user)
-        elif choice == '4':
-            # New product queue
-            pass
-        elif choice == '5':
-            # Log out
-            log_out(current_user)
-        elif choice == '6':
-            # End program
-            exit()
 
 
 if __name__ == '__main__':

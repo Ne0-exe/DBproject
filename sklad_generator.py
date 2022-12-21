@@ -85,7 +85,7 @@ def name():
 
 
 def id_composition(n):
-    print(random.randint(n))
+    return random.randint(1,n)
 
 
 
@@ -101,20 +101,24 @@ if __name__ == '__main__':
     ingredients_list = []
     beer_list = []
 
-    #  ilosc_piw =
+    #  ILE PIW WYGENEROWAĆ?
+    ilosc_piw = 200
 
-    #  ilosc_skladu =
+    #  ILE SKŁADÓW WYGENEROWAĆ?
+    ilosc_skladu = 100
 
 
-
-    for i in range(100):
+    #  GENEROWANIE SKŁADÓW
+    for i in range(ilosc_skladu):
         tmp_list = []
         tmp_list.append(additionals())
         tmp_list.append(malt())
         tmp_list.append(water())
         ingredients_list.append(tmp_list)
 
-    for i in range(1):
+
+    #  GENEROWANIE PIW
+    for i in range(ilosc_piw):
         tmp_list_2 = []
         tmp_list_2.append(name())
         tmp_list_2.append(brand())
@@ -126,23 +130,32 @@ if __name__ == '__main__':
         tmp_list_2.append(foam())
         tmp_list_2.append(CO2())
         tmp_list_2.append(country())
+        tmp_list_2.append(id_composition(ilosc_skladu))
         beer_list.append(tmp_list_2)
 
-    sql_insert_ingredients = "INSERT INTO sklad (woda, slod, dodatki) VALUES (%s, %s, %s)"
 
+    #  DODAWANIE SKŁADÓW DO BAZY DANYCH
+    sql_insert_ingredients = "INSERT INTO sklad (woda, slod, dodatki) VALUES (%s, %s, %s)"
     for i in ingredients_list:
         values = (i[2], i[1], i[0])
         mycursor.execute(sql_insert_ingredients, values)
         mydb.commit()
 
-    sql_insert_beer = "INSERT INTO piwa (nazwa_piwa, marka, gatunek, voltaz, IBU, opakowanie, rodzaj_fermentacji," \
-                      "piana, nasycenie_co2, kraj) " \
-                      "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
+    #  DODAWANIE PIW DO BAZY DANYCH
+    sql_insert_beer = "INSERT INTO piwa (nazwa_piwa, marka, gatunek, voltaz, IBU, opakowanie, rodzaj_fermentacji," \
+                      "piana, nasycenie_co2, kraj, id_skladu) " \
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
     for i in beer_list:
-        values_2 = (i[0], i[1], i[2], i[3], i[6], i[4], i[5], i[7], i[8], i[9])
+        values_2 = (i[0], i[1], i[2], i[3], i[6], i[4], i[5], i[7], i[8], i[9], i[10])
         mycursor.execute(sql_insert_beer, values_2)
         mydb.commit()
+
+
+
+
+
+
 
 
     # WSTĘPNE UZALEŻNIENIE OD SIEBIE WYNIKÓW GENERATORA
