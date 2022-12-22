@@ -339,7 +339,7 @@ def acc_management_menu(current_user):
 
 
 def check_existing_users(current_user):
-    sql_command = "SELECT nazwa_w_systemie FROM uzytkownicy"
+    sql_command = "SELECT nazwa_uzytkownika FROM uzytkownicy"
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
 
