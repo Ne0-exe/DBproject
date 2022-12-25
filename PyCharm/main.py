@@ -366,7 +366,8 @@ def check_existing_users(current_user):
 def show_product(sql_command, current_id):
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
-
+    if not myresult:
+        return False
     size = 42
     for i in range(current_id, current_id + 3):
         if i < len(myresult):
@@ -398,6 +399,7 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     else:
         sql_command = "SELECT * FROM piwa WHERE %s='%s'" % (parameter, parameter_value)
 
+
     while show_product(sql_command, current_id):
         current_id += 3
         if current_id > 3:
@@ -409,7 +411,7 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
             if choice == '1':
                 search_by_parameter(current_user, parameter, parameter_value, current_id)
             elif choice == '2':
-                current_id -= 3
+                current_id -= 6
                 search_by_parameter(current_user, parameter, parameter_value, current_id)
             elif choice == '3':
                 search_product_menu(current_user)
@@ -428,6 +430,7 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
                 main_menu(current_user)
 
     if current_id == 0:
+        print('Nie odnaleziono produktów o wprowadzonych parametrach!')
         print('1. Wyszukaj ponownie')
         print('2. Menu główne')
         choice = input(':')
