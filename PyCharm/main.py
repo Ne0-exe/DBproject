@@ -534,7 +534,12 @@ def show_product(sql_command, current_id):
 
 
 def show_one_product(value, current_user):
-    sql_command = "SELECT * FROM piwa WHERE %s='%s' AND %s='%s'" % value
+    if value[2] == 'id_skladu':
+        parameter_value = value[3]
+        sql_command = "SELECT * FROM piwa WHERE {}={} AND id_skladu IN ({})".format(value[0], value[1], parameter_value)
+
+    else:
+        sql_command = "SELECT * FROM piwa WHERE %s='%s' AND %s='%s'" % value
     mycursor.execute(sql_command)
     myresult = mycursor.fetchone()
     if not myresult:
