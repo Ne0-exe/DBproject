@@ -126,7 +126,7 @@ class Unverified(Guest):
             if status == 1:
                 print('Opinie zaakceptowane: ')
                 for result in myresult:
-                    if result and result[4] == 2:
+                    if result[4] == 2:
                         print(f'Marka: {result[0]}')
                         print(f'Nazwa_piwa: {result[1]}')
                         print(f'Ocena: {result[2]}')
@@ -142,8 +142,6 @@ class Unverified(Guest):
                         print(f'Opinia: {result[3]}')
                         print(f'Powod odrzucenia: {result[5]}')
                         print("\n")
-                    if not result:
-                        print("Nie masz zadnych odrzuconych opnii")
             opinion_management_menu(self)
         else:
             print("Nie masz zadnych opinii")
@@ -234,8 +232,6 @@ class Verified(Unverified):
                         print(f'Ocena: {result[2]}')
                         print(f'Opinia: {result[3]}')
                         print("\n")
-                    if not result:
-                        print("Nie masz zadnych zaakceptowanych opnii")
             elif status == 2:
                 print('Opinie odrzucone: ')
                 for result in myresult:
@@ -246,8 +242,6 @@ class Verified(Unverified):
                         print(f'Opinia: {result[3]}')
                         print(f'Powod odrzucenia: {result[5]}')
                         print("\n")
-                    if not result:
-                        print("Nie masz zadnych zaakceptowanych opnii")
             opinion_management_menu(self)
         else:
             print("Nie masz zadnych opinii")
