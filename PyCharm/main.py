@@ -91,8 +91,8 @@ class Unverified(Guest):
         else:
             rating = input("Podaj ocene piwa: ")
             opinion = input("Napisz opinie na temat piwa: ")
-            sql = "INSERT INTO opinie (ocena, opinia, ID_piwa, nazwa_uzytkownika, id_statusu) VALUES (%s, %s, %s, %s, %s)"
-            val = (rating, opinion, ID_piwa, self.name, 1)
+            sql = "INSERT INTO opinie (ocena, opinia, ID_piwa, nazwa_uzytkownika, id_statusu, feedback) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = (rating, opinion, ID_piwa, self.name, 1, None)
             mycursor.execute(sql, val)
             mydb.commit()
             print("Dziekujemy za dodanie opinii!")
@@ -118,21 +118,36 @@ class Unverified(Guest):
             elif choice == "2":
                 pass
 
-    def show_user_opinion(self):
-        sql_command = "SELECT marka, nazwa_piwa, ocena, opinia FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
+    def show_user_opinion(self, status):
+        sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
         mycursor.execute(sql_command)
         myresult = mycursor.fetchall()
         if myresult:
-            print('Opinie: ')
-            for result in myresult:
-                print(f'Marka: {result[0]}')
-                print(f'Nazwa_piwa: {result[1]}')
-                print(f'Ocena: {result[2]}')
-                print(f'Opinia: {result[3]}')
-                print("\n")
+            if status == 1:
+                print('Opinie zaakceptowane: ')
+                for result in myresult:
+                    if result and result[4] == 2:
+                        print(f'Marka: {result[0]}')
+                        print(f'Nazwa_piwa: {result[1]}')
+                        print(f'Ocena: {result[2]}')
+                        print(f'Opinia: {result[3]}')
+                        print("\n")
+            elif status == 2:
+                print('Opinie odrzucone: ')
+                for result in myresult:
+                    if result[4] == 3:
+                        print(f'Marka: {result[0]}')
+                        print(f'Nazwa_piwa: {result[1]}')
+                        print(f'Ocena: {result[2]}')
+                        print(f'Opinia: {result[3]}')
+                        print(f'Powod odrzucenia: {result[5]}')
+                        print("\n")
+                    if not result:
+                        print("Nie masz zadnych odrzuconych opnii")
             opinion_management_menu(self)
         else:
             print("Nie masz zadnych opinii")
+            print("\n")
             print("Jesli chcesz wyszukac piwo w celu dodania opinii wybierz 1")
             print("Powrot do menu glownego 2")
             choice = input(": ")
@@ -176,11 +191,12 @@ class Verified(Unverified):
         else:
             rating = input("Podaj ocene piwa: ")
             opinion = input("Napisz opinie na temat piwa: ")
-            sql = "INSERT INTO opinie (ocena, opinia, ID_piwa, nazwa_uzytkownika, id_statusu) VALUES (%s, %s, %s, %s, %s)"
-            val = (rating, opinion, ID_piwa, self.name, 1)
+            sql = "INSERT INTO opinie (ocena, opinia, ID_piwa, nazwa_uzytkownika, id_statusu, feedback) VALUES (%s, %s, %s, %s, %s, %s)"
+            val = (rating, opinion, ID_piwa, self.name, 1, None)
             mycursor.execute(sql, val)
             mydb.commit()
             print("Dziekujemy za dodanie opinii!")
+
 
     def show_opinion(self, ID_piwa):
         sql_command = "SELECT * FROM opinie WHERE ID_piwa = '%s'" % ID_piwa
@@ -203,18 +219,35 @@ class Verified(Unverified):
             elif choice == "2":
                 pass
 
-    def show_user_opinion(self):
-        sql_command = "SELECT marka, nazwa_piwa, ocena, opinia FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
+    def show_user_opinion(self, status):
+        sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
         mycursor.execute(sql_command)
         myresult = mycursor.fetchall()
         if myresult:
-            print('Opinie: ')
-            for result in myresult:
-                print(f'Marka: {result[0]}')
-                print(f'Nazwa_piwa: {result[1]}')
-                print(f'Ocena: {result[2]}')
-                print(f'Opinia: {result[3]}')
-                print("\n")
+            if status == 1:
+                print('Opinie zaakceptowane: ')
+                for result in myresult:
+                    if result[4] == 2:
+                        print('Opinie zaakceptowane: ')
+                        print(f'Marka: {result[0]}')
+                        print(f'Nazwa_piwa: {result[1]}')
+                        print(f'Ocena: {result[2]}')
+                        print(f'Opinia: {result[3]}')
+                        print("\n")
+                    if not result:
+                        print("Nie masz zadnych zaakceptowanych opnii")
+            elif status == 2:
+                print('Opinie odrzucone: ')
+                for result in myresult:
+                    if result[4] == 3:
+                        print(f'Marka: {result[0]}')
+                        print(f'Nazwa_piwa: {result[1]}')
+                        print(f'Ocena: {result[2]}')
+                        print(f'Opinia: {result[3]}')
+                        print(f'Powod odrzucenia: {result[5]}')
+                        print("\n")
+                    if not result:
+                        print("Nie masz zadnych zaakceptowanych opnii")
             opinion_management_menu(self)
         else:
             print("Nie masz zadnych opinii")
@@ -277,7 +310,7 @@ class Admin(Verified):
                 mycursor.execute("UPDATE opinie SET feedback='%s' WHERE ID_opinii='%s'" % (reason, opinion_id))
                 mydb.commit()
             elif result == '2':
-                mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id
+                mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
                 mydb.commit()
         else:
             print("Wybrana opinia jest już modyfikowana. Wybierz ponownie!")
@@ -504,7 +537,13 @@ def opinion_management_menu(current_user):
     print("3. Wroc do menu")
     new_choice = input(": ")
     if new_choice == "1":
-        current_user.show_user_opinion()
+        print("1. Wyswietl zaakceptowane opinie")
+        print("2. Wyswietl odrzucone opinie")
+        choice = input(": ")
+        if choice == "1":
+            current_user.show_user_opinion(1)
+        if choice == "2":
+            current_user.show_user_opinion(2)
     elif new_choice == "2":
         #funkcja do implementacji
         pass
