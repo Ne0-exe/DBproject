@@ -272,10 +272,12 @@ class Admin(Verified):
             mydb.commit()
             result = input('Co chesz zrobic z opinią?\n1. Odrzucić\n2. Zaakceptować\n:')
             if result == '1':
+                reason = input("Podaj powód odrzucenia opinii:")
                 mycursor.execute("UPDATE opinie SET id_statusu=3 WHERE ID_opinii='%s'" % opinion_id)
+                mycursor.execute("UPDATE opinie SET feedback='%s' WHERE ID_opinii='%s'" % (reason, opinion_id))
                 mydb.commit()
             elif result == '2':
-                mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id)
+                mycursor.execute("UPDATE opinie SET id_statusu=2 WHERE ID_opinii='%s'" % opinion_id
                 mydb.commit()
         else:
             print("Wybrana opinia jest już modyfikowana. Wybierz ponownie!")
@@ -377,7 +379,7 @@ def register():
     new_name = input("Nazwa w systemie: ")
     new_age = input("Wiek: ")
 
-    sql_command = "SELECT email, nazwa_uzytkownika, haslo, ranga, licznik " \
+    sql_command = "SELECT email, nazwa_uzytkownika, haslo, id_roli, licznik " \
                   "FROM uzytkownicy " \
                   "WHERE email ='%s' OR nazwa_uzytkownika ='%s'" % (new_email, new_name)
     mycursor.execute(sql_command)
@@ -398,8 +400,8 @@ def register():
             main_menu(guest)
     else:
         # Jeżeli taki email nie znajduje się w bazie
-        sql_command = "INSERT INTO uzytkownicy (email, haslo, nazwa_uzytkownika, wiek) VALUES (%s, %s, %s, %s)"
-        values_to_insert = (new_email, new_password, new_name, new_age)
+        sql_command = "INSERT INTO uzytkownicy (email, haslo, nazwa_uzytkownika, wiek, id_roli) VALUES (%s, %s, %s, %s, %s)"
+        values_to_insert = (new_email, new_password, new_name, new_age, 1)
         mycursor.execute(sql_command, values_to_insert)
         mydb.commit()
         main_menu(guest)
@@ -415,10 +417,17 @@ def del_acc(current_user):
 def log_in():
     input_email = input("Email: ")
     password = input("Hasło: ")
-
-    sql_command = "SELECT email, haslo, nazwa_uzytkownika, ranga, licznik " \
-                  "FROM uzytkownicy " \
-                  "WHERE email ='%s'" % input_email
+    # SELECT
+    # rola
+    # FROM
+    # role, uzytkownicy
+    # WHERE
+    # uzytkownicy.id_roli = role.id
+    # AND
+    # uzytkownicy.nazwa_uzytkownika = 'a';
+    sql_command = "SELECT email, haslo, nazwa_uzytkownika, rola, licznik " \
+                  "FROM uzytkownicy, role " \
+                  "WHERE uzytkownicy.id_roli=role.id AND email ='%s'" % input_email
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
 
