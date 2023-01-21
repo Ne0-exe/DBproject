@@ -686,6 +686,18 @@ def opinion_management_menu(current_user):
         main_menu(current_user)
 
 
+def is_result_empty(sql_command, id):
+    mycursor.execute(sql_command)
+    myresult = mycursor.fetchall()
+
+    if not myresult:
+        return False
+
+    if myresult[id]:
+        return True
+
+
+
 def show_product(sql_command, current_id):
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
@@ -871,7 +883,8 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
                 main_menu(current_user)
 
     if current_id == 0:
-        print('Nie odnaleziono produktów o wprowadzonych parametrach!')
+        if not is_result_empty(sql_command, current_id):
+            print('Nie odnaleziono produktów o podanych parametrach!')
         print('1. Wyszukaj ponownie')
         print('2. Menu główne')
         choice = input(':')
