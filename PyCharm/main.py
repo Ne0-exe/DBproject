@@ -427,14 +427,19 @@ class Admin(Verified):
         mycursor.execute(sql_command)
         myresult = mycursor.fetchall()
 
-        print("ID\tocena\topinia\t\t\tID_piwa\tnazwa uzytkownika\t\tstatus")
         for i in range(current_id, current_id + 3):
             if i < len(myresult):
-                print('%s. %s %s %s %s %s |' % (myresult[i][0], myresult[i][1], myresult[i][2], myresult[i][3],
-                                                myresult[i][4], myresult[i][5]))
+                print(f'ID_opinii: {myresult[i][0]}')
+                print(f'Ocena: {myresult[i][1]}')
+                print(f'Opinia: {myresult[i][2]}')
+                print(f'ID_piwa: {myresult[i][3]}')
+                print(f'nazwa użytkownika: {myresult[i][4]}')
+                print(f'Status: {myresult[i][5]}')
+                print('\n' + "----------------------" + '\n')
             if i + 1 == len(myresult):
                 return False
         return True
+
 
     def control_display(self, current_id=0) -> None:
         mydb.commit()
@@ -927,6 +932,21 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     print('Zakonczono wyszukiwanie')
     search_product_menu(current_user)
 
+def show_10_top(current_user):
+    sql_command = "SELECT nazwa_piwa, marka, srednia_ocen FROM piwa JOIN top10_ocena ON piwa.ID_piwa = top10_ocena.ID_piwa"
+    mycursor.execute(sql_command)
+    my_results = mycursor.fetchall()
+    for i in range(len(my_results)):
+        print(f"------------Miejsce {i + 1}------------")
+        print(f"Nazwa:{my_results[i][0]}")
+        print(f"Marka:{my_results[i][1]}")
+        print(f"Średnia ocen:{my_results[i][2]}")
+        print("\n")
+
+    input("Naciśnij ENTER aby wrócić do MENU")
+    main_menu(current_user)
+
+
 
 def search_product_menu(current_user):
     print('Wyszukaj produkt: ')
@@ -935,7 +955,8 @@ def search_product_menu(current_user):
     print('3. Gatunek')
     print('4. Voltaż')
     print('5. Skład')
-    print('6. Menu główne')
+    print('6. Top 10')
+    print('7. Menu główne')
 
     choice = input(':')
 
@@ -989,6 +1010,10 @@ def search_product_menu(current_user):
         search_by_parameter(current_user, 'id_skladu', sql_command)
 
     elif choice == '6':
+        show_10_top(current_user)
+
+
+    elif choice == '7':
         main_menu(current_user)
 
 
