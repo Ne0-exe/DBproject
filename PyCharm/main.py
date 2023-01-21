@@ -97,6 +97,30 @@ class Unverified(Guest):
             mydb.commit()
             print("Dziekujemy za dodanie opinii!")
 
+    def remove_opinion(self, ID_opinii):
+        sql_new_command = 'SELECT id_statusu FROM opinie WHERE ID_opinii = "%i"' % ID_opinii
+        mycursor.execute(sql_new_command)
+        myresult = mycursor.fetchall()
+        if myresult:
+            if int(myresult[0][0]) == 1:
+                sql_command = "DELETE FROM kolejka WHERE id_opinii = '%i'" % ID_opinii
+                mycursor.execute(sql_command)
+                mydb.commit()
+            if int(myresult[0][0]) == 2:
+                sql_command = "DELETE FROM zaakceptowane WHERE id_opinii = '%i'" % ID_opinii
+                mycursor.execute(sql_command)
+                mydb.commit()
+            if int(myresult[0][0]) == 3:
+                sql_command = "DELETE FROM odrzucone WHERE id_opinii = '%i'" % ID_opinii
+                mycursor.execute(sql_command)
+                mydb.commit()
+            sql_command = "DELETE FROM opinie WHERE id_opinii = '%i'" % ID_opinii
+            mycursor.execute(sql_command)
+            mydb.commit()
+            return mycursor.rowcount
+        else:
+            return mycursor.rowcount
+
     def show_opinion(self, ID_piwa):
         sql_command = "SELECT * FROM opinie WHERE ID_piwa = '%s'" % ID_piwa
         mycursor.execute(sql_command)
@@ -119,12 +143,12 @@ class Unverified(Guest):
                 pass
 
     def show_user_opinion(self, status):
-        sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
+        sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
         mycursor.execute(sql_command)
         myresult = mycursor.fetchall()
         if myresult:
             if status == 1:
-                new_sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
+                new_sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
                                   "FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa " \
                                   "AND id_statusu = 2 " % self.name
                 mycursor.execute(new_sql_command)
@@ -132,32 +156,50 @@ class Unverified(Guest):
                 if new_result:
                     print('Opinie zaakceptowane: ')
                     for result in new_result:
-                        print('Opinie zaakceptowane: ')
-                        print(f'Marka: {result[0]}')
-                        print(f'Nazwa_piwa: {result[1]}')
-                        print(f'Ocena: {result[2]}')
-                        print(f'Opinia: {result[3]}')
+                        print(f'ID_opinii: {result[0]}')
+                        print(f'Marka: {result[1]}')
+                        print(f'Nazwa_piwa: {result[2]}')
+                        print(f'Ocena: {result[3]}')
+                        print(f'Opinia: {result[4]}')
                         print("\n")
                 else:
                     print("Nie masz zaakceptowanych opinii")
             elif status == 2:
-                new_sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
+                new_sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
                                   "FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa " \
-                                  "AND id_statusu = 3 " % self.name
+                                  "AND id_statusu = '3' " % self.name
                 mycursor.execute(new_sql_command)
                 new_result = mycursor.fetchall()
                 if new_result:
                     print('Opinie odrzucone: ')
-                    for result in myresult:
-                        if result[4] == 3:
-                            print(f'Marka: {result[0]}')
-                            print(f'Nazwa_piwa: {result[1]}')
-                            print(f'Ocena: {result[2]}')
-                            print(f'Opinia: {result[3]}')
-                            print(f'Powod odrzucenia: {result[5]}')
-                            print("\n")
+                    for result in new_result:
+                        print(f'ID_opinii: {result[0]}')
+                        print(f'Marka: {result[1]}')
+                        print(f'Nazwa_piwa: {result[2]}')
+                        print(f'Ocena: {result[3]}')
+                        print(f'Opinia: {result[4]}')
+                        print(f'Powod odrzucenia: {result[6]}')
+                        print("\n")
                 else:
                     print("Nie masz odrzuconych opinii")
+            elif status == 3:
+                new_sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
+                                  "FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa " \
+                                  "AND id_statusu = '1' " % self.name
+                mycursor.execute(new_sql_command)
+                new_result = mycursor.fetchall()
+                if new_result:
+                    print('Opinie w kolejce: ')
+                    for result in new_result:
+                        print(f'ID_opinii: {result[0]}')
+                        print(f'Marka: {result[1]}')
+                        print(f'Nazwa_piwa: {result[2]}')
+                        print(f'Ocena: {result[3]}')
+                        print(f'Opinia: {result[4]}')
+                        print(f'Powod odrzucenia: {result[6]}')
+                        print("\n")
+                else:
+                    print("Nie masz opinii w kolejce")
             opinion_management_menu(self)
         else:
             print("Nie masz zadnych opinii")
@@ -169,7 +211,6 @@ class Unverified(Guest):
                 search_product_menu(self)
             elif choice == "2":
                 main_menu(self)
-
 
 class Verified(Unverified):
     def __del__(self):
@@ -211,6 +252,29 @@ class Verified(Unverified):
             mydb.commit()
             print("Dziekujemy za dodanie opinii!")
 
+    def remove_opinion(self, ID_opinii):
+        sql_new_command = 'SELECT id_statusu FROM opinie WHERE ID_opinii = "%i"' % ID_opinii
+        mycursor.execute(sql_new_command)
+        myresult = mycursor.fetchall()
+        if myresult:
+            if int(myresult[0][0]) == 1:
+                sql_command = "DELETE FROM kolejka WHERE id_opinii = '%i'" % ID_opinii
+                mycursor.execute(sql_command)
+                mydb.commit()
+            if int(myresult[0][0]) == 2:
+                sql_command = "DELETE FROM zaakceptowane WHERE id_opinii = '%i'" % ID_opinii
+                mycursor.execute(sql_command)
+                mydb.commit()
+            if int(myresult[0][0]) == 3:
+                sql_command = "DELETE FROM odrzucone WHERE id_opinii = '%i'" % ID_opinii
+                mycursor.execute(sql_command)
+                mydb.commit()
+            sql_command = "DELETE FROM opinie WHERE id_opinii = '%i'" % ID_opinii
+            mycursor.execute(sql_command)
+            mydb.commit()
+            return mycursor.rowcount
+        else:
+            return mycursor.rowcount
 
     def show_opinion(self, ID_piwa):
         sql_command = "SELECT * FROM opinie WHERE ID_piwa = '%s'" % ID_piwa
@@ -234,12 +298,12 @@ class Verified(Unverified):
                 pass
 
     def show_user_opinion(self, status):
-        sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
+        sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa" % self.name
         mycursor.execute(sql_command)
         myresult = mycursor.fetchall()
         if myresult:
             if status == 1:
-                new_sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
+                new_sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
                                   "FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa " \
                                   "AND id_statusu = 2 " % self.name
                 mycursor.execute(new_sql_command)
@@ -247,32 +311,50 @@ class Verified(Unverified):
                 if new_result:
                     print('Opinie zaakceptowane: ')
                     for result in new_result:
-                        print('Opinie zaakceptowane: ')
-                        print(f'Marka: {result[0]}')
-                        print(f'Nazwa_piwa: {result[1]}')
-                        print(f'Ocena: {result[2]}')
-                        print(f'Opinia: {result[3]}')
+                        print(f'ID_opinii: {result[0]}')
+                        print(f'Marka: {result[1]}')
+                        print(f'Nazwa_piwa: {result[2]}')
+                        print(f'Ocena: {result[3]}')
+                        print(f'Opinia: {result[4]}')
                         print("\n")
                 else:
                     print("Nie masz zaakceptowanych opinii")
             elif status == 2:
-                new_sql_command = "SELECT marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
+                new_sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
                                   "FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa " \
-                                  "AND id_statusu = 3 " % self.name
+                                  "AND id_statusu = '3' " % self.name
                 mycursor.execute(new_sql_command)
                 new_result = mycursor.fetchall()
                 if new_result:
                     print('Opinie odrzucone: ')
-                    for result in myresult:
-                        if result[4] == 3:
-                            print(f'Marka: {result[0]}')
-                            print(f'Nazwa_piwa: {result[1]}')
-                            print(f'Ocena: {result[2]}')
-                            print(f'Opinia: {result[3]}')
-                            print(f'Powod odrzucenia: {result[5]}')
-                            print("\n")
+                    for result in new_result:
+                        print(f'ID_opinii: {result[0]}')
+                        print(f'Marka: {result[1]}')
+                        print(f'Nazwa_piwa: {result[2]}')
+                        print(f'Ocena: {result[3]}')
+                        print(f'Opinia: {result[4]}')
+                        print(f'Powod odrzucenia: {result[6]}')
+                        print("\n")
                 else:
                     print("Nie masz odrzuconych opinii")
+            elif status == 3:
+                new_sql_command = "SELECT ID_opinii, marka, nazwa_piwa, ocena, opinia, id_statusu, feedback " \
+                                  "FROM opinie, piwa WHERE nazwa_uzytkownika = '%s' AND opinie.ID_piwa = piwa.ID_piwa " \
+                                  "AND id_statusu = '1' " % self.name
+                mycursor.execute(new_sql_command)
+                new_result = mycursor.fetchall()
+                if new_result:
+                    print('Opinie w kolejce: ')
+                    for result in new_result:
+                        print(f'ID_opinii: {result[0]}')
+                        print(f'Marka: {result[1]}')
+                        print(f'Nazwa_piwa: {result[2]}')
+                        print(f'Ocena: {result[3]}')
+                        print(f'Opinia: {result[4]}')
+                        print(f'Powod odrzucenia: {result[6]}')
+                        print("\n")
+                else:
+                    print("Nie masz opinii w kolejce")
             opinion_management_menu(self)
         else:
             print("Nie masz zadnych opinii")
@@ -284,6 +366,7 @@ class Verified(Unverified):
                 search_product_menu(self)
             elif choice == "2":
                 main_menu(self)
+
 
 class Admin(Verified):
     def __del__(self):
@@ -563,14 +646,37 @@ def opinion_management_menu(current_user):
     if new_choice == "1":
         print("1. Wyswietl zaakceptowane opinie")
         print("2. Wyswietl odrzucone opinie")
+        print("3. Wyswietl oczekujace opinie")
         choice = input(": ")
         if choice == "1":
             current_user.show_user_opinion(1)
         if choice == "2":
             current_user.show_user_opinion(2)
+        if choice == "3":
+            current_user.show_user_opinion(3)
     elif new_choice == "2":
-        #funkcja do implementacji
-        pass
+        print("Ktora opinie chcesz usunac?")
+        choice = input(": ")
+        var = current_user.remove_opinion(int(choice))
+        if var == 0:
+            while True:
+                print('Nie ma takiej opinii')
+                print("Jesli chcesz usunac inna opinie wybierz 1")
+                print("Jesli nie wybierz 2")
+                choice = input(": ")
+                if choice == "1":
+                    print("Ktora opinie chcesz usunac?")
+                    choice = input(": ")
+                    var = current_user.remove_opinion(int(choice))
+                    if var == 0:
+                        continue
+                    else:
+                        print(f'Usunales opinie ! \n')
+                        opinion_management_menu(current_user)
+                elif choice == '2':
+                    opinion_management_menu(current_user)
+        else:
+            print(f'Usunales opinie ! \n')
     elif new_choice == "3":
         main_menu(current_user)
 
