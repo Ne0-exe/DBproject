@@ -881,10 +881,48 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
         if not is_result_empty(sql_command, current_id):
             print('Nie odnaleziono produktów o podanych parametrach!')
         print('1. Wyszukaj ponownie')
-        print('2. Menu główne')
+        print('2. Wyświetl wybrane piwo')
+        print('3. Menu główne')
         choice = input(':')
         if choice == '1':
             search_product_menu(current_user)
+        if choice == '2':
+            while True:
+                choice_id = input("Podaj ID piwa, ktore chcesz wyswietlic: ")
+                value = ("ID_piwa", int(choice_id), parameter, parameter_value)
+                if show_one_product(value, current_user) is False:
+                    continue
+                else:
+                    break
+            if current_user.role == 'unverified' or current_user.role == 'verified':
+                while True:
+                    print('1. Wyswietl opinie na temat wybranego piwa')
+                    print('2. Dodaj opinie')
+                    print('3. Wroc do poprzedniego wyswietlania')
+                    print('4. Wyswietl ponownie parametry wybranego piwa')
+                    print('5. Menu główne')
+                    new_choice = input(':')
+                    if new_choice == '1':
+                        current_user.show_opinion(int(choice_id))
+                        print("\n")
+                    elif new_choice == '2':
+                        current_user.add_opinion(int(choice_id))
+                        print("\n")
+                    elif new_choice == '3':
+                        search_by_parameter(current_user, parameter, parameter_value, current_id)
+                    elif new_choice == '4':
+                        show_one_product(value, current_user)
+                    elif new_choice == '5':
+                        main_menu(current_user)
+            else:
+                print('1. Wroc do poprzedniego wyswietlania')
+                print('2. Menu główne')
+                new_choice = input(':')
+                if new_choice == '1':
+                    search_by_parameter(current_user, parameter, parameter_value, current_id)
+                elif new_choice == '2':
+                    main_menu(current_user)
+
         elif choice == '2':
             main_menu(current_user)
     else:
@@ -910,7 +948,7 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
                     print('2. Dodaj opinie')
                     print('3. Wroc do poprzedniego wyswietlania')
                     print('4. Wyswietl ponownie parametry wybranego piwa')
-                    print('4. Menu główne')
+                    print('5. Menu główne')
                     new_choice = input(':')
                     if new_choice == '1':
                         current_user.show_opinion(int(choice_id))
