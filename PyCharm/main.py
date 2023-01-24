@@ -212,6 +212,7 @@ class Unverified(Guest):
             elif choice == "2":
                 main_menu(self)
 
+
 class Verified(Unverified):
     def __del__(self):
         print('Obiekt został usunięty')
@@ -253,6 +254,9 @@ class Verified(Unverified):
             sql = "INSERT INTO opinie (ocena, opinia, ID_piwa, nazwa_uzytkownika, id_statusu, feedback) VALUES (%s, %s, %s, %s, %s, %s)"
             val = (rating, opinion, ID_piwa, self.name, 1, None)
             mycursor.execute(sql, val)
+            mydb.commit()
+            sql_command = "UPDATE opinie SET id_statusu = 2 WHERE nazwa_uzytkownika = '%s' AND ID_piwa = '%s'" % (self.name, ID_piwa)
+            mycursor.execute(sql_command)
             mydb.commit()
             print("Dziekujemy za dodanie opinii!")
 
@@ -702,7 +706,6 @@ def is_result_empty(sql_command, id):
         return True
 
 
-
 def show_product(sql_command, current_id):
     mycursor.execute(sql_command)
     myresult = mycursor.fetchall()
@@ -988,6 +991,7 @@ def search_by_parameter(current_user, parameter, parameter_value, current_id=0):
     print('Zakonczono wyszukiwanie')
     search_product_menu(current_user)
 
+
 def show_10_top(current_user):
     sql_command = "SELECT nazwa_piwa, marka, srednia_ocen FROM piwa JOIN top10_ocena ON piwa.ID_piwa = top10_ocena.ID_piwa"
     mycursor.execute(sql_command)
@@ -1001,7 +1005,6 @@ def show_10_top(current_user):
 
     input("Naciśnij ENTER aby wrócić do MENU")
     main_menu(current_user)
-
 
 
 def search_product_menu(current_user):
@@ -1074,6 +1077,7 @@ def search_product_menu(current_user):
 
 
 def main_menu(current_user):
+    mydb.commit()
     clear_view()
     print('MENU \n')
     current_user.show_menu()
