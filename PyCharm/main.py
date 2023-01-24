@@ -686,6 +686,7 @@ def opinion_management_menu(current_user):
                     opinion_management_menu(current_user)
         else:
             print(f'Usunales opinie ! \n')
+            opinion_management_menu(current_user)
     elif new_choice == "3":
         main_menu(current_user)
 
