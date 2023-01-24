@@ -218,21 +218,25 @@ class Verified(Unverified):
 
     def show_menu(self):
         print('1. Wyszukaj produkt')
-        print('2. Zarzadzaj kontem')
-        print('3. Wyloguj')
-        print('4. Exit')
+        print('2. Zarzadzaj opiniami')
+        print('3. Zarzadzaj kontem')
+        print('4. Wyloguj')
+        print('5. Exit')
         choice = input(":")
         if choice == '1':
             # Search product
             pass
             search_product_menu(self)
         elif choice == '2':
+            # opinion manage
+            opinion_management_menu(self)
+        elif choice == '3':
             # Account manage
             acc_management_menu(self)
-        elif choice == '3':
+        elif choice == '4':
             # Log out
             log_out(self)
-        elif choice == '4':
+        elif choice == '5':
             # End program
             exit()
 
